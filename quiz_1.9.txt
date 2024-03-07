@@ -1,0 +1,10 @@
+1) std::cout is found in what header file?
+std (using namespace std) X this is a namespace.
+	Answ:	found in <iostream>
+2) inline can be used when declaring?
+small function blocks? /
+	Answ:	Inline can be used when declaring functions to speed them up.
+			With the exception of large/complex function blocks.
+3) what is the difference between long and long long and int?
+The number of bytes. X
+	Answ:	C++ allows for longer integer types starting with a shortest type short.

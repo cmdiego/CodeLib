@@ -1,2 +1,8 @@
 # CodeVault
-A collection of reviews and programs
+
+***Description***
+
+Cpp for C programmers:
+
+- C++ as a Better C
+- 
