@@ -1,6 +1,0 @@
-﻿  cp_routine.cpp
-  generic_sum.cpp
-  typedef_days.cpp
-D:\Dev\Coursera\CppForProgrammers\CodeVault\Module2\typedef_days.cpp(14,2): warning C4091: 'typedef ': ignored on left of 'days' when no variable is declared
-  Generating Code...
-  Module2.vcxproj -> D:\Dev\Coursera\CppForProgrammers\CodeVault\Module2\x64\Debug\Module2.exe
