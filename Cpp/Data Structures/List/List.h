@@ -21,14 +21,19 @@ public:
 	List(const List& list); // Move constructor
 	~List(); // Destructor
 
-	// Module implementations
+	/* Module implementations */
 	void prepend(int val);
 
+	void append(int val);
+	
 	void print();
-
+	
 	int getSize() const;
-
+	
 	void printHead();
+
+	void setHead(const int val);
+
 
 	List_element* getHead();
 

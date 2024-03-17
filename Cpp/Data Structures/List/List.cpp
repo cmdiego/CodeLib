@@ -11,18 +11,18 @@ List_element::List_element(int n = 0, List_element* ptr = nullptr)
 
 /* List Implementations */
 // Array -> List, data transform constructor
-List(const int* arr, int size)
+List::List(const int* arr, int size)
 {
 	// Empty List
-	if (head == nullptr)
+	if (this->head == nullptr)
 	{
 		std::cout << "List is empty, making a new list" << std::endl;
 		// Head insert
 		for (int i = size - 1; i >= 0; --i)
 		{
 			std::cout << "Prepeding [ " << arr[i] << " ] " << std::endl;
-			cursor = head = new List_element(arr[i], head);
-			size++;
+			this->cursor = this->head = new List_element(arr[i], head);
+			this->size++;
 		}
 	}
 	else
@@ -31,65 +31,95 @@ List(const int* arr, int size)
 		for (int i = size - 1; i >= 0; --i)
 		{
 			std::cout << "Prepeding [ " << arr[i] << " ] " << std::endl;
-			
-			size++;
+			this->size++;
 		}
 	}
 }
 
-// TODO: Implement the following two constructors
-List(const List& list); // Move constructor
-~List(); // Destructor
+List::List(const List& list)
+{
+	if (list.head == 0)
+	{
+		this->head = this->tail = this->cursor = 0;
+		this->size = 0;
+	}
+	else
+	{
+		for (this->cursor = list.head; this->cursor != 0; this->cursor = this->cursor->next)
+		{
+			// Head insert, flips the list passed
+			//this->head = new List_element(this->cursor->data, this->head);
+			
+			// Tail insert, keeps order the same
+			this->append(this->cursor->data);
+			this->size++;
+		}
+		
+		this->cursor = this->head;
+	}
+}
 
-// TODO: Test append
+List::~List()
+{
+	while(this->head != nullptr)
+	{
+		List_element* next_ptr = this->head->next;
+		delete(this->head);
+		this->head = next_ptr;
+	}
+}
+
 void List::append(int val)
 {
 	// Empty list
 	if (this->head == nullptr)
 	{
 		std::cout << "Appending [ " << val << " ] " << std::endl;
-		cursor = head = new List_element(val, head);
-		size++;
+		this->tail = this->head = new List_element(val, this->head);
+		this->size++;
 	}
 	else
 	{
 		std::cout << "Appending [ " << val << " ] " << std::endl;
-		// TODO: Implement append
+		// Tail insert
+		List_element* prev_tail = this->tail;
+		this->tail = new List_element(val, nullptr);
+		prev_tail->next = this->tail;
+		this->size++;
 	}
-
 }
 
 void List::prepend(int val)
 {
 	// Empty list
-	if (head == nullptr)
+	if (this->head == nullptr)
 	{
 		std::cout << "Prepending [ " << val << " ] " << std::endl;
-		cursor = head = new List_element(val, head);
-		size++;
+		this->tail = this->cursor = this->head = new List_element(val, this->head);
+		this->size++;
 	}
 	else
 	{
 		std::cout << "Prepending [ " << val << " ] " << std::endl;
-		head = new List_element(val, head);
-		size++;
+		// Head insert
+		this->head = new List_element(val, this->head);
+		this->size++;
 	}
 }
 
 void List::print()
 {
-	if (head == nullptr)
+	if (this->head == nullptr)
 	{
 		std::cout << "List is empty" << std::endl;
 	}
 	else
 	{
-		List_element* temp = head;
-		while (temp->next != nullptr)
+		for (this->cursor = this->head; this->cursor != nullptr; this->cursor = this->cursor->next)
 		{
-			std::cout << "[ " << temp->data << " ] -> ";
-		}
-		std::cout << "NULL" << std::endl;
+			std::cout << "[ " << this->cursor->data << " ] ->";
+		}	
+		std::cout << " NULL" << std::endl;
 	}
 }
 
@@ -130,6 +160,10 @@ List_element* List::getHead()
 	}
 }
 
+void List::setHead(const int val)
+{
+	this->head->data = val;
+}
 
 // NOTES: 
 
