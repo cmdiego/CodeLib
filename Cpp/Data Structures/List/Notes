@@ -1,0 +1,38 @@
+// NOTES:
+
+/*
+// C notation
+// This is public by default
+struct list_element
+{
+	list_element(int n = -1, list_element* ptr = 0) :
+		d(n), next(ptr) {}
+
+	int d;
+	list_element* next;
+};
+
+// OR EQUIVALENTLY C++ notation
+
+class list_element
+{
+public:
+
+	// Constructor: initializes two elements, d and next as -1
+	// What is -1 used for?
+	// The null pointer which in C++10 is better written as nullptr
+
+	list_element(int n = -1, list_element* ptr = 0) :
+		d(n), next(ptr) {}
+
+	int d;
+	list_element* next;
+};
+*/
+
+Question:
+        When I create an object of a class,
+        is there a way to call one of the object/class' functions inside the constructor?
+Answer:
+        Yes, but beware of virtual methods...
+        more here: https://stackoverflow.com/questions/7809270/call-a-class-function-in-the-constructor-c

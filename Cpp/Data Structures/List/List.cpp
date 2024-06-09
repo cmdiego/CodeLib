@@ -21,8 +21,7 @@ List::List(const int* arr, int size)
 		for (int i = size - 1; i >= 0; --i)
 		{
 			std::cout << "Prepeding [ " << arr[i] << " ] " << std::endl;
-			this->cursor = this->head = new List_element(arr[i], head);
-			this->size++;
+			List::prepend(arr[i]);
 		}
 	}
 	else
@@ -51,10 +50,8 @@ List::List(const List& list)
 			//this->head = new List_element(this->cursor->data, this->head);
 			
 			// Tail insert, keeps order the same
-			this->append(this->cursor->data);
-			this->size++;
+			List::prepend(this->cursor->data);
 		}
-		
 		this->cursor = this->head;
 	}
 }
@@ -65,7 +62,7 @@ List::~List()
 	{
 		List_element* next_ptr = this->head->next;
 		delete(this->head);
-		this->head = next_ptr;
+		this->head = this->cursor = next_ptr;
 	}
 }
 
@@ -94,13 +91,11 @@ void List::prepend(int val)
 	// Empty list
 	if (this->head == nullptr)
 	{
-		std::cout << "Prepending [ " << val << " ] " << std::endl;
 		this->tail = this->cursor = this->head = new List_element(val, this->head);
 		this->size++;
 	}
 	else
 	{
-		std::cout << "Prepending [ " << val << " ] " << std::endl;
 		// Head insert
 		this->head = new List_element(val, this->head);
 		this->size++;

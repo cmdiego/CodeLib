@@ -16,9 +16,8 @@ class List
 public:
 	List() : head(nullptr), cursor(nullptr) {}
 
-	// TODO: Implement the following two constructors
 	List(const int* arr, int size); // Array -> List, data transfer constructor
-	List(const List& list); // Move constructor
+	List(const List& list); // Move Constructor
 	~List(); // Destructor
 
 	/* Module implementations */
@@ -55,7 +54,7 @@ private:
 // This is public by default
 struct list_element
 {
-	list_element(int n = 0, list_element* ptr = 0) :
+	list_element(int n = -1, list_element* ptr = 0) :
 		d(n), next(ptr) {}
 
 	int d;
@@ -68,11 +67,11 @@ class list_element
 {
 public:
 
-	// Constructor: initializes two elements, d and next as 0
-	// What is 0 used for?
-	// The null pointer which in C++11 is better written as nullptr
+	// Constructor: initializes two elements, d and next as -1
+	// What is -1 used for?
+	// The null pointer which in C++10 is better written as nullptr
 
-	list_element(int n = 0, list_element* ptr = 0) :
+	list_element(int n = -1, list_element* ptr = 0) :
 		d(n), next(ptr) {}
 
 	int d;
