@@ -18,11 +18,9 @@ public:
 	std::vector<unsigned int> shortestPath(unsigned int from, unsigned int to);
 	bool isEdge(unsigned int from, unsigned int to);
 	std::vector<unsigned int> getNeighbours(unsigned int vertex);
-	unsigned int getNumEdges(unsigned int vertex);
 
 private:
 	/* Methods */
-	unsigned int getMaxNumEdgesAllowed();
 	void addEdge(unsigned int from, unsigned int to, unsigned int weight);
 	void removeEdge(unsigned int from, unsigned int to);
 	void build();
@@ -30,7 +28,7 @@ private:
 	/* Variables */
 	std::vector<std::vector<unsigned int>> m_matrix;
 	unsigned int m_size;
-	unsigned int m_maxNumEdgesAllowed;
+	unsigned int m_maxNumEdges;
 	unsigned int m_totalEdges;
 	unsigned int m_maxWeight;
 	float m_density;

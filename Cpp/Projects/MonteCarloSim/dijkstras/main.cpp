@@ -31,7 +31,7 @@ using namespace std;
 
 int main()
 {
-	float density = 0.75;  //  min. of 50% of the edges are present
+	float density = 0.70;
 	int size = 10;
 	Graph* p_graph = new Graph(size, density);
 	p_graph->print();
