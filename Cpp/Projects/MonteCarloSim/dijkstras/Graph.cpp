@@ -3,6 +3,8 @@
 #include <vector>
 #include <ctime>
 #include <iomanip>
+#include <string>
+
 
 inline unsigned int randomGenerator(unsigned int min, unsigned int max)
 {
@@ -33,17 +35,14 @@ Graph::Graph(unsigned int size, float density)
 	m_totalEdges = 0;
 	m_maxWeight = 10; // Default: max weight of an edge
 	// m_size * m_size = total num of edges in a complete graph
-	m_matrix = std::vector<std::vector<unsigned int>>(m_size, std::vector<unsigned int>(m_size));
+	m_matrix = std::vector<std::vector<unsigned int>>(m_size, std::vector<unsigned int>(m_size, INT_MAX));
 	build();
 }
 
 void Graph::addEdge(unsigned int from, unsigned int to, unsigned int weight)
 {
 	m_matrix[from][to] = weight;
-	if (weight > 0)
-	{
-		++m_totalEdges;
-	}
+	++m_totalEdges;
 }
 
 void Graph::removeEdge(unsigned int from, unsigned int to)
@@ -56,23 +55,6 @@ bool Graph::isEdge(unsigned int from, unsigned int to)
 	return m_matrix[from][to] != 0 ? true : false;
 }
 
-std::vector<unsigned int> Graph::getNeighbours(unsigned int node)
-{
-	std::vector<unsigned int> neighbors;
-	for (int i = 0; i < m_matrix[node].size(); i++)
-	{
-		if (i == node)
-		{
-			continue;
-		}
-		else if (m_matrix[node][i] != 0)
-		{
-			neighbors.push_back(i);
-		}
-	}
-	return neighbors;
-}
-
 void Graph::build()
 {
 	std::cout << "Building graph..." << std::endl;
@@ -81,10 +63,14 @@ void Graph::build()
 		unsigned int neighborDensity = randomGenerator(m_density, m_size);
 		for (int j = 0; j < neighborDensity; j++)
 		{
-			int weight = randomGenerator(0, m_maxWeight); // 0 means no edge
+			int weight = randomGenerator(0, m_maxWeight);
 			int to = randomGenerator(0, m_size - 1);
-			std::cout << "Adding [" << weight << "] from [" << i << "] to [" << to << "]\n" << std::flush;
-			addEdge(i, j, weight);
+			if (i == to)
+			{
+				continue;
+			}
+			//std::cout << "Adding [" << weight << "] from [" << i << "] to [" << to << "]\n" << std::flush;
+			addEdge(i, to, weight);
 		}
 	}
 }
@@ -92,23 +78,33 @@ void Graph::build()
 std::vector<unsigned int> Graph::shortestPath()
 {
 	std::vector<unsigned int> shortestPathSet;
+	std::vector<std::vector<unsigned int>> visitedNodes(m_size, std::vector<unsigned int>(m_size, 0));
 	unsigned int from	= 0;
 	unsigned int to		= randomGenerator(1, (m_size - 1));
 	std::cout << "Calculating shortest path from " << from << " to " << to << std::endl;
 	// Dijkstra's algorithm
+	unsigned int minNeighbor = INT_MAX;
 	for (int i = 0; i < m_size; i++)
 	{
-		std::vector<unsigned int> neighbors = getNeighbours(i);
-		unsigned int minNeighbor = neighbors[0];
-		for (int j = 0; j < neighbors.size() - 1; j++)
+		for (int j = 0; j < m_size - 1; j++)
 		{
-			std::cout << "Node [" << i << "] has neighbor [" << neighbors[j] << "]" << std::endl;
-			if (neighbors[j] < neighbors[j + 1])
+			if (i == j or visitedNodes[i][j] == 1)
 			{
-				minNeighbor = j;
+				continue;
 			}
+			else if (m_matrix[i][j] > m_matrix[i][j + 1])
+			{
+				std::cout << "from [" << minNeighbor << "] -> [" << j << "] = " << m_matrix[i][j + 1] << "\n" << std::flush;
+				minNeighbor = j + 1;
+			}
+			// mark node as visited
+			visitedNodes[i][j] = 1;
 		}
 		shortestPathSet.push_back(minNeighbor);
+		if (minNeighbor == to)
+		{
+			break;
+		}
 		i = minNeighbor;
 	}
 	return shortestPathSet;
@@ -116,14 +112,50 @@ std::vector<unsigned int> Graph::shortestPath()
 
 std::vector<unsigned int> Graph::shortestPath(unsigned int from, unsigned int to)
 {
-	std::vector<unsigned int> retPath;
-	std::cout << "Calculating shortest path..." << std::endl;
-
+	std::vector<unsigned int> shortestPathSet;
+	std::vector<std::vector<unsigned int>> visitedNodes(m_size, std::vector<unsigned int>(m_size, 0));
+	std::cout << "Calculating shortest path from " << from << " to " << to << std::endl;
 	// Dijkstra's algorithm
+	unsigned int minNeighbor = INT_MAX;
+	for (int i = 0; i < m_size; i++)
+	{
+		for (int j = 0; j < m_size - 1; j++)
+		{
+			if (i == j or visitedNodes[i][j] == 1)
+			{
+				continue;
+			}
+			else if (m_matrix[i][j] > m_matrix[i][j + 1])
+			{
+				std::cout << "from [" << minNeighbor << "] -> [" << j + 1 << "] = " << m_matrix[i][j + 1] << "\n" << std::flush;
+				minNeighbor = j + 1;
+			}
+			// mark node as visited
+			visitedNodes[i][j] = 1;
+		}
+		shortestPathSet.push_back(minNeighbor);
+		if (minNeighbor == to)
+		{
+			break;
+		}
+		i = minNeighbor;
+	}
+	return shortestPathSet;
+}
 
-
-
-	return retPath;
+void Graph::printSet(std::vector<unsigned int> set)
+{
+	for (int i = 0; i < set.size(); i++)
+	{
+		if (i == set.size() - 1)
+		{
+			std::cout << set[i] << std::endl;
+		}
+		else
+		{
+			std::cout << set[i] << " -> ";
+		}
+	}
 }
 
 void Graph::print()
@@ -138,15 +170,16 @@ void Graph::print()
 		std::cout << "Error: cannot print matrix with size greater than 20" << std::endl;
 		return;
 	}
-
+	
 	std::cout << "Printing graph..." << std::endl;
 	for (int i = 0; i < m_size; i++)
 	{
 		for (int j = 0; j < m_size; j++)
 		{
-			std::cout	<< std::setw(2) << "[" \
-						<< std::setw(2) << m_matrix[i][j] \
-						<< std::setw(2) << "] ";
+			
+			std::cout	<< std::setw(3) << "[" \
+						<< std::setw(3) << (m_matrix[i][j] == INT_MAX ? "INF" : std::to_string(m_matrix[i][j])) \
+						<< std::setw(3) << "] ";
 		}
 		std::cout << std::endl;
 	}

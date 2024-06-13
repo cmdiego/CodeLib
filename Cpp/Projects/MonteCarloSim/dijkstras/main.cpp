@@ -32,7 +32,10 @@ using namespace std;
 int main()
 {
 	float density = 0.70;
-	int size = 10;
+	int size = 20;
 	Graph* p_graph = new Graph(size, density);
 	p_graph->print();
+	std::vector<unsigned int> shortPath = p_graph->shortestPath(0, 20);
+	std::cout << "Shortest path: \n";
+	p_graph->printSet(shortPath);
 }

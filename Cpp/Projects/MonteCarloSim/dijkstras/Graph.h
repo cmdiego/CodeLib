@@ -18,7 +18,7 @@ public:
 	std::vector<unsigned int> shortestPath(unsigned int from, unsigned int to);
 	bool isEdge(unsigned int from, unsigned int to);
 	std::vector<unsigned int> getNeighbours(unsigned int vertex);
-
+	void printSet(std::vector<unsigned int> set);
 private:
 	/* Methods */
 	void addEdge(unsigned int from, unsigned int to, unsigned int weight);
