@@ -1,10 +1,11 @@
 /*
 	Description:	Edge List (Better for sparse graphs) vs. Adjacency Matrix (better for dense graphs)
 
-					A representation of a directed graph with n vertices using an array of n lists of vertices.
-					List 'i' contains vertex 'j' if there is an edge from 'i' to 'j'.
-					A weighted graph may be represented with a list of vertex/weight pairs.
-					An undirected graph may be represented by having vertex 'j' in the list for vertex 'i' and vice versa.
+					A representation of a directed graph with n nodes using an array of n nodes.
+					Row 'i' contains weights of the edge to node 'j', if there is an edge from 'i' to 'j' 
+					then the weight is non-INF.
+					
+					An undirected graph may be represented by having node 'j' in the list for node 'i' and vice versa.
 					The total weight of a path is the sum of the weights of the edges in the path.
 
 					(n): is the number of nodes, (m): is the number of edges
