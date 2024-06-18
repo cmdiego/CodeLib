@@ -11,7 +11,7 @@ inline unsigned int randomGenerator(unsigned int min, unsigned int max)
 	return min + rand() % (max - min + 1);
 };
 
-Graph::Graph(unsigned int size, float density)
+Graph::Graph(unsigned int size, float density, int type)
 {
 	// Why does the randomGenerator work if we place the srand func inside Graph??
 	srand(time(NULL));
@@ -26,8 +26,6 @@ Graph::Graph(unsigned int size, float density)
 		std::cout << "Error: 'density' cannot be greater than 1; allowed range: [0.00, 1.00]" << std::endl;
 		return;
 	}
-	std::cout << "Building graph..." << std::endl;
-
 	m_size = size;
 	std::cout << "Number of nodes = " << m_size << std::endl;
 	m_density = std::ceil((m_size - 1) * density);
@@ -35,8 +33,16 @@ Graph::Graph(unsigned int size, float density)
 	m_totalEdges = 0;
 	m_maxWeight = 10; // Default: max weight of an edge
 	// m_size * m_size = total num of edges in a complete graph
-	m_matrix = std::vector<std::vector<unsigned int>>(m_size, std::vector<unsigned int>(m_size, 0));
-	
+	m_matrix = std::vector<std::vector<unsigned int>>(m_size, std::vector<unsigned int>(m_size, INT_MAX));
+	switch (type)
+	{
+	case 0:
+		buildDirected();
+		break;
+	case 1:
+		buildUndirected();
+		break;
+	}
 }
 
 void Graph::addEdge(unsigned int from, unsigned int to, unsigned int weight)
@@ -57,41 +63,48 @@ bool Graph::isEdge(unsigned int from, unsigned int to)
 
 void Graph::buildDirected()
 {
-	std::cout << "Building graph..." << std::endl;
+	std::cout << "Building a directed graph..." << std::endl;
 	for (int i = 0; i < m_size; i++)
 	{
 		unsigned int neighborDensity = randomGenerator(m_density, m_size);
 		for (int j = 0; j < neighborDensity; j++)
 		{
-			int weight = randomGenerator(0, m_maxWeight);
+			int weight = randomGenerator(1, m_maxWeight); // Greater than 0
 			int to = randomGenerator(0, m_size - 1);
 			if (i == to)
 			{
 				continue;
 			}
-			//std::cout << "Adding [" << weight << "] from [" << i << "] to [" << to << "]\n" << std::flush;
+			if (m_matrix[to][i] == 0 or m_matrix[i][to] == 0)
+			{
+				std::cout << "Edge already exists from [" << i << "] to [" << to << "]\n" << std::flush;
+				continue;
+			}
+			std::cout << "Adding [" << weight << "] from [" << i << "] to [" << to << "]\n" << std::flush;
 			addEdge(i, to, weight);
-
+			std::cout << "Adding [" << 0 << "] from [" << to << "] to [" << i << "]\n" << std::flush;
+			addEdge(to, i, 0); // 0 means no edge
 		}
 	}
 }
 
 void Graph::buildUndirected()
 {
-	std::cout << "Building graph..." << std::endl;
+	std::cout << "Building an undirected graph..." << std::endl;
 	for (int i = 0; i < m_size; i++)
 	{
 		unsigned int neighborDensity = randomGenerator(m_density, m_size);
 		for (int j = 0; j < neighborDensity; j++)
 		{
-			int weight = randomGenerator(0, m_maxWeight);
+			int weight = randomGenerator(1, m_maxWeight);
 			int to = randomGenerator(0, m_size - 1);
 			if (i == to)
 			{
 				continue;
 			}
-			//std::cout << "Adding [" << weight << "] from [" << i << "] to [" << to << "]\n" << std::flush;
+			std::cout << "Adding [" << weight << "] from [" << i << "] to [" << to << "]\n" << std::flush;
 			addEdge(i, to, weight);
+			addEdge(to, i, weight);
 		}
 	}
 }
@@ -104,29 +117,33 @@ std::vector<unsigned int> Graph::shortestPath()
 	unsigned int to		= randomGenerator(1, (m_size - 1));
 	std::cout << "Calculating shortest path from " << from << " to " << to << std::endl;
 	// Dijkstra's algorithm
-	unsigned int minNeighbor = INT_MAX;
+	unsigned int minWeight = INT_MAX;
+	unsigned int destNode;
+	shortestPathSet.push_back(from);
 	for (int i = 0; i < m_size; i++)
 	{
 		for (int j = 0; j < m_size - 1; j++)
 		{
+			// Skip if the node is itself, already visited
 			if (i == j or visitedNodes[i][j] == 1)
 			{
 				continue;
 			}
-			else if (m_matrix[i][j] > m_matrix[i][j + 1])
+			if (m_matrix[i][j + 1] != 0 && m_matrix[i][j + 1] != INT_MAX && m_matrix[i][j + 1] < minWeight)
 			{
-				std::cout << "from [" << minNeighbor << "] -> [" << j << "] = " << m_matrix[i][j + 1] << "\n" << std::flush;
-				minNeighbor = j + 1;
+				minWeight = m_matrix[i][j + 1];
+				destNode = j + 1;
 			}
 			// mark node as visited
 			visitedNodes[i][j] = 1;
 		}
-		shortestPathSet.push_back(minNeighbor);
-		if (minNeighbor == to)
+		std::cout << "from [" << i << "] -> [" << destNode << "] = " << minWeight << "\n" << std::flush;
+		shortestPathSet.push_back(destNode);
+		if (destNode == to)
 		{
 			break;
 		}
-		i = minNeighbor;
+		i = destNode;
 	}
 	return shortestPathSet;
 }

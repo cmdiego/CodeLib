@@ -1,10 +1,9 @@
 /*
 	Description:	Edge List (Better for sparse graphs) vs. Adjacency Matrix (better for dense graphs)
-
-					A representation of a directed graph with n nodes using an array of n nodes.
-					Row 'i' contains weights of the edge to node 'j', if there is an edge from 'i' to 'j' 
-					then the weight is non-INF.
 					
+					A representation of a directed graph maybe represented by having node 'j' in the set for
+					node 'i', though not vice versa.
+
 					An undirected graph may be represented by having node 'j' in the set for node 'i' and vice versa.
 					The total weight of a path is the sum of the weights of the edges in the path.
 
@@ -23,7 +22,8 @@
 
 	Questions:		How to average in disconnected graphs - ignore them for averaging
 					Density is for entire set of edges - does not mean node degree is uniform;
-					also for smal graphs a low density leads to graph being disconnected.
+					
+	Note:			Small graphs with low density leads to the graph being disconnected.
 */
 #include <iostream>
 #include "Graph.h"
@@ -33,10 +33,20 @@ using namespace std;
 int main()
 {
 	float density = 0.70;
-	int size = 20;
-	Graph* p_graph = new Graph(size, density);
+	int size = 10;
+	Graph* p_graph = new Graph(size, density, 0);
+	std::cout << "Directed graph: \n";
 	p_graph->print();
-	std::vector<unsigned int> shortPath = p_graph->shortestPath(0, 20);
+	std::vector<unsigned int> shortPath = p_graph->shortestPath();
 	std::cout << "Shortest path: \n";
 	p_graph->printSet(shortPath);
+	delete(p_graph);
+	
+	p_graph = new Graph(size, density, 1);
+	std::cout << "Undirected graph: \n";
+	p_graph->print();
+	shortPath = p_graph->shortestPath();
+	std::cout << "Shortest path: \n";
+	p_graph->printSet(shortPath);
+	delete(p_graph);
 }
