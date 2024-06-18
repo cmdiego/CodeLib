@@ -5,7 +5,7 @@
 					Row 'i' contains weights of the edge to node 'j', if there is an edge from 'i' to 'j' 
 					then the weight is non-INF.
 					
-					An undirected graph may be represented by having node 'j' in the list for node 'i' and vice versa.
+					An undirected graph may be represented by having node 'j' in the set for node 'i' and vice versa.
 					The total weight of a path is the sum of the weights of the edges in the path.
 
 					(n): is the number of nodes, (m): is the number of edges

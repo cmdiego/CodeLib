@@ -35,8 +35,8 @@ Graph::Graph(unsigned int size, float density)
 	m_totalEdges = 0;
 	m_maxWeight = 10; // Default: max weight of an edge
 	// m_size * m_size = total num of edges in a complete graph
-	m_matrix = std::vector<std::vector<unsigned int>>(m_size, std::vector<unsigned int>(m_size, INT_MAX));
-	build();
+	m_matrix = std::vector<std::vector<unsigned int>>(m_size, std::vector<unsigned int>(m_size, 0));
+	
 }
 
 void Graph::addEdge(unsigned int from, unsigned int to, unsigned int weight)
@@ -55,7 +55,28 @@ bool Graph::isEdge(unsigned int from, unsigned int to)
 	return m_matrix[from][to] != 0 ? true : false;
 }
 
-void Graph::build()
+void Graph::buildDirected()
+{
+	std::cout << "Building graph..." << std::endl;
+	for (int i = 0; i < m_size; i++)
+	{
+		unsigned int neighborDensity = randomGenerator(m_density, m_size);
+		for (int j = 0; j < neighborDensity; j++)
+		{
+			int weight = randomGenerator(0, m_maxWeight);
+			int to = randomGenerator(0, m_size - 1);
+			if (i == to)
+			{
+				continue;
+			}
+			//std::cout << "Adding [" << weight << "] from [" << i << "] to [" << to << "]\n" << std::flush;
+			addEdge(i, to, weight);
+
+		}
+	}
+}
+
+void Graph::buildUndirected()
 {
 	std::cout << "Building graph..." << std::endl;
 	for (int i = 0; i < m_size; i++)

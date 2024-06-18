@@ -1,12 +1,6 @@
 #pragma once
 #include <vector>
 
-class Node
-{
-	// Add vector
-	// Add size (weighted nodes)
-};
-
 class Graph
 {
 public:
@@ -23,7 +17,8 @@ private:
 	/* Methods */
 	void addEdge(unsigned int from, unsigned int to, unsigned int weight);
 	void removeEdge(unsigned int from, unsigned int to);
-	void build();
+	void buildUndirected();
+	void buildDirected();
 
 	/* Variables */
 	std::vector<std::vector<unsigned int>> m_matrix;
