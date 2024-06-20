@@ -107,46 +107,50 @@ void Graph::buildUndirected()
 
 std::vector<unsigned int> Graph::shortestPath()
 {
+	// TODO: IMPLEMENT OPEN/CLOSE SET ALGO. TO OVERCOME DISCONNECTED GRAPHS
+
 	std::vector<unsigned int> shortestPathSet;
 	std::vector<std::vector<unsigned int>> visitedNodes(m_size, std::vector<unsigned int>(m_size, 0));
-	unsigned int from	= 0;
 	unsigned int to		= randomGenerator(1, (m_size - 1));
-	std::cout << "Calculating shortest path from " << from << " to " << to << std::endl;
+	unsigned int from = 0;
 	// Dijkstra's algorithm
-	unsigned int minWeight = INF;
-	unsigned int destNode;
-	shortestPathSet.push_back(from);
+	unsigned int lastNodeWeight = INF;
+	visitedNodes[0][0] = 1;
+	shortestPathSet.push_back(0);
+	std::cout << "Calculating shortest path from " << from << " to " << to << std::endl;
 	for (int i = 0; i < m_size; i++)
 	{
-		for (int j = 0; j < m_size - 1; j++)
+		for (int j = 0; j < m_size; j++)
 		{
-			// Skip if the node is itself, already visited
-			if (i == j or visitedNodes[i][j] == 1)
+			// Skip if the node is itself, already visited, or is not an edge
+			if (i == j || visitedNodes[i][j] == 1 || !isEdge(i, j))
 			{
 				continue;
 			}
-			if (m_matrix[i][j + 1] != 0 && m_matrix[i][j + 1] != INF && m_matrix[i][j + 1] < minWeight)
+			if (lastNodeWeight > m_matrix[i][j])
 			{
-				minWeight = m_matrix[i][j + 1];
-				destNode = j + 1;
+				lastNodeWeight = m_matrix[i][j];
+				from = j;
+				visitedNodes[i][j] = 1;
 			}
-			// mark node as visited
-			visitedNodes[i][j] = 1;
 		}
-		std::cout << "from [" << i << "] -> [" << destNode << "] = " << minWeight << "\n" << std::flush;
-		shortestPathSet.push_back(destNode);
-		if (destNode == to)
+		shortestPathSet.push_back(from);
+		if (from == to)
 		{
-			break;
+			return shortestPathSet;
 		}
-		i = destNode;
+		else
+		{
+			i = from;
+		}
 	}
+	printf("Graph is disconnected, could not reach destination...\n");
 	return shortestPathSet;
 }
 
 //std::vector<unsigned int> Graph::shortestPath(unsigned int from, unsigned int to)
 //{
-//	// TODO:
+//	
 //}
 
 void Graph::printSet(std::vector<unsigned int> set)

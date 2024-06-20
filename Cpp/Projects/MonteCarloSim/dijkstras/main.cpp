@@ -38,9 +38,9 @@ int main()
 
 	Graph* p_graph = new Graph(size, density, 0);
 	p_graph->print();
-	//std::vector<unsigned int> shortPath = p_graph->shortestPath();
-	//std::cout << "Shortest path: \n";
-	//p_graph->printSet(shortPath);
+	std::vector<unsigned int> shortPath = p_graph->shortestPath();
+	std::cout << "Shortest path: \n";
+	p_graph->printSet(shortPath);
 	delete(p_graph);
 	
 	p_graph = new Graph(size, density, 1);
