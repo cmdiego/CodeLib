@@ -25,4 +25,5 @@ private:
 	unsigned int m_totalEdges;
 	unsigned int m_maxWeight;
 	float m_density;
+	int INF = INT_MAX;
 };

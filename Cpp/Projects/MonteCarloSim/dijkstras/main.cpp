@@ -32,21 +32,21 @@ using namespace std;
 
 int main()
 {
-	float density = 0.70;
+	float density = 0.1;
 	int size = 10;
+
+
 	Graph* p_graph = new Graph(size, density, 0);
-	std::cout << "Directed graph: \n";
 	p_graph->print();
-	std::vector<unsigned int> shortPath = p_graph->shortestPath();
-	std::cout << "Shortest path: \n";
-	p_graph->printSet(shortPath);
+	//std::vector<unsigned int> shortPath = p_graph->shortestPath();
+	//std::cout << "Shortest path: \n";
+	//p_graph->printSet(shortPath);
 	delete(p_graph);
 	
 	p_graph = new Graph(size, density, 1);
-	std::cout << "Undirected graph: \n";
 	p_graph->print();
-	shortPath = p_graph->shortestPath();
-	std::cout << "Shortest path: \n";
-	p_graph->printSet(shortPath);
+	//shortPath = p_graph->shortestPath();
+	//std::cout << "Shortest path: \n";
+	//p_graph->printSet(shortPath);
 	delete(p_graph);
 }
