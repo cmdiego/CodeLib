@@ -5,13 +5,12 @@
 #include <iomanip>
 #include <string>
 
-
 inline unsigned int randomGenerator(unsigned int min, unsigned int max)
 {
 	return min + rand() % (max - min + 1);
 };
 
-Graph::Graph(unsigned int size, float density, int type)
+Graph::Graph(const unsigned int size, float density, int type)
 {
 	// Why does the randomGenerator work if we place the srand func inside Graph??
 	srand(time(NULL));
@@ -105,53 +104,49 @@ void Graph::buildUndirected()
 	}
 }
 
-std::vector<unsigned int> Graph::shortestPath()
+void Graph::shortestPath(unsigned int source)
 {
-	// TODO: IMPLEMENT OPEN/CLOSE SET ALGO. TO OVERCOME DISCONNECTED GRAPHS
+	std::vector<bool> shortestPathSet = std::vector<bool>(m_size);
+	std::vector<unsigned int> dist = std::vector<unsigned int>(m_size);
+	std::vector<unsigned int> pred = std::vector<unsigned int>(m_size);
 
-	std::vector<unsigned int> shortestPathSet;
-	std::vector<std::vector<unsigned int>> visitedNodes(m_size, std::vector<unsigned int>(m_size, 0));
-	unsigned int to		= randomGenerator(1, (m_size - 1));
-	unsigned int from = 0;
-	// Dijkstra's algorithm
-	unsigned int lastNodeWeight = INF;
-	visitedNodes[0][0] = 1;
-	shortestPathSet.push_back(0);
-	std::cout << "Calculating shortest path from " << from << " to " << to << std::endl;
 	for (int i = 0; i < m_size; i++)
 	{
+		shortestPathSet[i] = false;
+		dist[i] = INF;
+		pred[i] = -1;
+	}
+	dist[source] = 0;
+	for (int i = 0; i < m_size - 1; i++)
+	{
+		unsigned int minIndex = minDistance(dist, shortestPathSet);
+		shortestPathSet[minIndex] = true;
 		for (int j = 0; j < m_size; j++)
 		{
-			// Skip if the node is itself, already visited, or is not an edge
-			if (i == j || visitedNodes[i][j] == 1 || !isEdge(i, j))
+			if (!shortestPathSet[j] && m_matrix[minIndex][j] &&
+				dist[minIndex] != INF && dist[minIndex] + m_matrix[minIndex][j] < dist[j])
 			{
-				continue;
+				dist[j] = dist[minIndex] + m_matrix[minIndex][j];
+				pred[j] = minIndex;
 			}
-			if (lastNodeWeight > m_matrix[i][j])
-			{
-				lastNodeWeight = m_matrix[i][j];
-				from = j;
-				visitedNodes[i][j] = 1;
-			}
-		}
-		shortestPathSet.push_back(from);
-		if (from == to)
-		{
-			return shortestPathSet;
-		}
-		else
-		{
-			i = from;
 		}
 	}
-	printf("Graph is disconnected, could not reach destination...\n");
-	return shortestPathSet;
+	printSet(dist);
 }
 
-//std::vector<unsigned int> Graph::shortestPath(unsigned int from, unsigned int to)
-//{
-//	
-//}
+unsigned int Graph::minDistance(std::vector<unsigned int> distArr, std::vector<bool> spt)
+{
+	unsigned int min_val = INF, min_index;
+	for (int i = 0; i < m_size; i++)
+	{
+		if (spt[i] == false && distArr[i] <= min_val)
+		{
+			min_val = distArr[i];
+			min_index = i;
+		}
+	}
+	return min_index;
+}
 
 void Graph::printSet(std::vector<unsigned int> set)
 {
@@ -184,6 +179,7 @@ void Graph::print()
 	std::cout << "Printing graph..." << std::endl;
 	for (int i = 0; i < m_size; i++)
 	{
+		std::cout << i << std::endl;
 		for (int j = 0; j < m_size; j++)
 		{
 			
