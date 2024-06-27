@@ -32,7 +32,7 @@ using namespace std;
 
 int main()
 {
-	float density = 0.1;
+	float density = 0.0;
 	int size = 10;
 
 

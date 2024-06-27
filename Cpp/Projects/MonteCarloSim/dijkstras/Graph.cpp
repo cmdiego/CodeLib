@@ -124,7 +124,7 @@ void Graph::shortestPath(unsigned int source)
 		for (int j = 0; j < m_size; j++)
 		{
 			if (!shortestPathSet[j] && m_matrix[minIndex][j] &&
-				dist[minIndex] != INF && dist[minIndex] + m_matrix[minIndex][j] < dist[j])
+				dist[minIndex] != INF && (dist[minIndex] + m_matrix[minIndex][j]) < dist[j])
 			{
 				dist[j] = dist[minIndex] + m_matrix[minIndex][j];
 				pred[j] = minIndex;
