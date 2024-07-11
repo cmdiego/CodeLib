@@ -31,14 +31,14 @@ Graph::Graph(const unsigned int size, float density, int type)
 	m_maxWeight = 10; // Default: max weight of an edge
 	// m_size * m_size = total num of edges in a complete graph
 	m_matrix = std::vector<std::vector<unsigned int>>(m_size, std::vector<unsigned int>(m_size, INF));
-	switch (type)
+	if (type < 0 || type > 1)
 	{
-	case 0:
-		buildDirected();
-		break;
-	case 1:
-		buildUndirected();
-		break;
+		std::cout << "invalid type passed to constructor" << std::endl;
+		exit(1);
+	}
+	else
+	{
+		this->buildGraph(type);
 	}
 }
 
@@ -58,9 +58,13 @@ bool Graph::isEdge(unsigned int from, unsigned int to)
 	return m_matrix[from][to] == 0 ? false : true;
 }
 
-void Graph::buildDirected()
+void Graph::buildGraph(int type)
 {
-	std::cout << "Building a directed graph..." << std::endl;
+	if (type == 0)
+		std::cout << "Building a directed graph..." << std::endl;
+	else
+		std::cout << "Building a undirected graph..." << std::endl;
+
 	for (unsigned i = 0; i < m_size; i++)
 	{
 		for (unsigned j = 0; j < m_size; j++)
@@ -75,30 +79,10 @@ void Graph::buildDirected()
 			{
 				int weight = randomGenerator(1, m_maxWeight); // Greater than 0
 				addEdge(i, j, weight);
-				addEdge(j, i, 0); // 0 means no edge
-			}
-		}
-	}
-}
-
-void Graph::buildUndirected()
-{
-	std::cout << "Building a directed graph..." << std::endl;
-	for (int i = 0; i < m_size; i++)
-	{
-		for (int j = 0; j < m_size; j++)
-		{
-			if (i == j)
-			{
-				addEdge(i, j, 0);
-				continue;
-			}
-			float prob = float(randomGenerator(0, 100) / 100.00);
-			if (prob >= m_density)
-			{
-				int weight = randomGenerator(1, m_maxWeight); // Greater than 0
-				addEdge(i, j, weight);
-				addEdge(j, i, weight);
+				if (type == 0)
+					addEdge(j, i, 0); // 0 means no edge
+				else
+					addEdge(j, i, weight);
 			}
 		}
 	}
@@ -106,32 +90,65 @@ void Graph::buildUndirected()
 
 void Graph::shortestPath(unsigned int source)
 {
-	std::vector<bool> shortestPathSet = std::vector<bool>(m_size);
+	std::vector<bool> visited = std::vector<bool>(m_size);
 	std::vector<unsigned int> dist = std::vector<unsigned int>(m_size);
-	std::vector<unsigned int> pred = std::vector<unsigned int>(m_size);
+	std::vector<unsigned int> spt = std::vector<unsigned int>(m_size);
 
 	for (int i = 0; i < m_size; i++)
 	{
-		shortestPathSet[i] = false;
+		visited[i] = false;
 		dist[i] = INF;
-		pred[i] = -1;
+		spt[i] = -1;
 	}
 	dist[source] = 0;
 	for (int i = 0; i < m_size - 1; i++)
 	{
-		unsigned int minIndex = minDistance(dist, shortestPathSet);
-		shortestPathSet[minIndex] = true;
+		unsigned int minIndex = minDistance(dist, visited);
+		visited[minIndex] = true;
 		for (int j = 0; j < m_size; j++)
 		{
-			if (!shortestPathSet[j] && m_matrix[minIndex][j] &&
+			if (!visited[j] && m_matrix[minIndex][j] &&
 				dist[minIndex] != INF && (dist[minIndex] + m_matrix[minIndex][j]) < dist[j])
 			{
 				dist[j] = dist[minIndex] + m_matrix[minIndex][j];
-				pred[j] = minIndex;
 			}
 		}
 	}
+	// print shortest distance from src to every node
 	printSet(dist);
+}
+
+void Graph::shortestPath(unsigned int source, unsigned int destination)
+{
+	std::vector<bool> visited = std::vector<bool>(m_size);
+	std::vector<unsigned int> dist = std::vector<unsigned int>(m_size);
+	std::vector<unsigned int> spt = std::vector<unsigned int>(m_size);
+
+	for (int i = 0; i < m_size; i++)
+	{
+		visited[i] = false;
+		dist[i] = INF;
+		spt[i] = 11;
+	}
+	dist[source] = 0;
+	for (int i = 0; i < m_size; i++)
+	{
+		unsigned int minIndex = minDistance(dist, visited);
+		visited[minIndex] = true;
+		for (int j = 0; j < m_size; j++)
+		{
+			if (!visited[j] && m_matrix[minIndex][j] &&
+				dist[minIndex] != INF && (dist[minIndex] + m_matrix[minIndex][j]) < dist[j])
+			{
+				dist[j] = dist[minIndex] + m_matrix[minIndex][j];
+				if (j == destination)
+					spt[i] = minIndex; // previous node
+			}
+		}
+		printIter(dist, i);
+	}
+	// print path to destination node
+	printSet(spt);
 }
 
 unsigned int Graph::minDistance(std::vector<unsigned int> distArr, std::vector<bool> spt)
@@ -150,15 +167,57 @@ unsigned int Graph::minDistance(std::vector<unsigned int> distArr, std::vector<b
 
 void Graph::printSet(std::vector<unsigned int> set)
 {
+	std::cout << "count:";
 	for (int i = 0; i < set.size(); i++)
 	{
 		if (i == set.size() - 1)
 		{
-			std::cout << set[i] << std::endl;
+			std::cout << std::setw(3) << i << std::endl;
 		}
 		else
 		{
-			std::cout << set[i] << " -> ";
+			std::cout << std::setw(3) << i;
+		}
+	}
+	std::cout << "value:";
+	for (int i = 0; i < set.size(); i++)
+	{
+		if (i == set.size() - 1)
+		{
+			std::cout << std::setw(3) << set[i] << std::endl;
+		}
+		else
+		{
+			std::cout << std::setw(3) << set[i];
+		}
+	}
+}
+
+void Graph::printIter(std::vector<unsigned int> set, int iteration)
+{
+	std::cout << "iteration: " << iteration << std::endl;
+	std::cout << "index:";
+	for (int i = 0; i < set.size(); i++)
+	{
+		if (i == set.size() - 1)
+		{
+			std::cout << std::setw(3) << i << std::endl;
+		}
+		else
+		{
+			std::cout << std::setw(3) << i;
+		}
+	}
+	std::cout << "value:";
+	for (int i = 0; i < set.size(); i++)
+	{
+		if (i == set.size() - 1)
+		{
+			std::cout << std::setw(3) << set[i] << std::endl;
+		}
+		else
+		{
+			std::cout << std::setw(3) << set[i];
 		}
 	}
 }

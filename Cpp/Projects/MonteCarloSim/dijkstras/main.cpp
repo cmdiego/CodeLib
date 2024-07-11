@@ -32,20 +32,12 @@ using namespace std;
 
 int main()
 {
-	float density = 0.0;
+	float density = 0.3;
 	int size = 10;
 
-
-	Graph* p_graph = new Graph(size, density, 0);
+	Graph* p_graph = new Graph(size, density, 1);
 	p_graph->print();
-	p_graph->shortestPath(0);
-	std::cout << "Shortest path: \n";
-	delete(p_graph);
-	
-	p_graph = new Graph(size, density, 1);
-	p_graph->print();
-	//shortPath = p_graph->shortestPath();
-	//std::cout << "Shortest path: \n";
-	//p_graph->printSet(shortPath);
+	std::cout << "Shortest distance from source to all nodes: \n";
+	p_graph->shortestPath(0, 4);
 	delete(p_graph);
 }
