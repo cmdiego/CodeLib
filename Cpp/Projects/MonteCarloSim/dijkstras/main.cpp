@@ -32,8 +32,8 @@ using namespace std;
 
 int main()
 {
-	float density = 0.3;
-	int size = 10;
+	float density = 0.8;
+	int size = 20;
 
 	Graph* p_graph = new Graph(size, density, 1);
 	p_graph->print();

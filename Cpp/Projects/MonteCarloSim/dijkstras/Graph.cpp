@@ -128,7 +128,7 @@ void Graph::shortestPath(unsigned int source, unsigned int destination)
 	{
 		visited[i] = false;
 		dist[i] = INF;
-		spt[i] = 11;
+		spt[i] = INF;
 	}
 	dist[source] = 0;
 	for (int i = 0; i < m_size; i++)
@@ -142,10 +142,10 @@ void Graph::shortestPath(unsigned int source, unsigned int destination)
 			{
 				dist[j] = dist[minIndex] + m_matrix[minIndex][j];
 				if (j == destination)
-					spt[i] = minIndex; // previous node
+					spt[i] = minIndex; // previous node, TODO: replace with queue or stack
 			}
 		}
-		printIter(dist, i);
+		 printIter(dist, i);
 	}
 	// print path to destination node
 	printSet(spt);
@@ -153,7 +153,8 @@ void Graph::shortestPath(unsigned int source, unsigned int destination)
 
 unsigned int Graph::minDistance(std::vector<unsigned int> distArr, std::vector<bool> spt)
 {
-	unsigned int min_val = INF, min_index;
+	unsigned int min_index = INF;
+	unsigned int min_val = INF;
 	for (int i = 0; i < m_size; i++)
 	{
 		if (spt[i] == false && distArr[i] <= min_val)
@@ -179,12 +180,20 @@ void Graph::printSet(std::vector<unsigned int> set)
 			std::cout << std::setw(3) << i;
 		}
 	}
-	std::cout << "value:";
+	std::cout << "node :";
 	for (int i = 0; i < set.size(); i++)
 	{
-		if (i == set.size() - 1)
+		if (i == set.size() - 1 && set[i] == INF)
+		{
+			std::cout << std::setw(3) << "-" << std::endl;
+		}
+		else if (i == set.size() - 1)
 		{
 			std::cout << std::setw(3) << set[i] << std::endl;
+		}
+		else if (set[i] == INF)
+		{
+			std::cout << std::setw(3) << "-";
 		}
 		else
 		{
@@ -211,9 +220,17 @@ void Graph::printIter(std::vector<unsigned int> set, int iteration)
 	std::cout << "value:";
 	for (int i = 0; i < set.size(); i++)
 	{
-		if (i == set.size() - 1)
+		if (i == set.size() - 1 && set[i] == INF)
+		{
+			std::cout << std::setw(3) << "-" << std::endl;
+		}
+		else if (i == set.size() - 1)
 		{
 			std::cout << std::setw(3) << set[i] << std::endl;
+		}
+		else if (set[i] == INF)
+		{
+			std::cout << std::setw(3) << "-";
 		}
 		else
 		{
@@ -222,7 +239,7 @@ void Graph::printIter(std::vector<unsigned int> set, int iteration)
 	}
 }
 
-void Graph::print()
+void Graph::printGraph()
 {
 	if (m_size < 1)
 	{

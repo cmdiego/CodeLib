@@ -8,7 +8,7 @@ public:
 	void shortestPath(unsigned int source);
 	void shortestPath(unsigned int source, unsigned int dest);
 	bool isEdge(unsigned int from, unsigned int to);
-	void print();
+	void printGraph();
 	void printSet(std::vector<unsigned int> set);
 	void printIter(std::vector<unsigned int> set, int interation);
 	void printMatrix(std::vector<std::vector<unsigned int>> matrix);
