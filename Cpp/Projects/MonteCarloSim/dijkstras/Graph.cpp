@@ -1,6 +1,7 @@
 #include "Graph.h"
 #include <iostream>
 #include <vector>
+#include <queue>
 #include <ctime>
 #include <iomanip>
 #include <string>
@@ -10,7 +11,7 @@ inline unsigned int randomGenerator(unsigned int min, unsigned int max)
 	return min + rand() % (max - min + 1);
 };
 
-Graph::Graph(const unsigned int size, float density, int type)
+Graph::Graph(const unsigned int size, float density, int type, bool verbose)
 {
 	// Why does the randomGenerator work if we place the srand func inside Graph??
 	srand(time(NULL));
@@ -29,6 +30,7 @@ Graph::Graph(const unsigned int size, float density, int type)
 	m_size = size;
 	m_totalEdges = 0;
 	m_maxWeight = 10; // Default: max weight of an edge
+	m_verbose = verbose;
 	// m_size * m_size = total num of edges in a complete graph
 	m_matrix = std::vector<std::vector<unsigned int>>(m_size, std::vector<unsigned int>(m_size, INF));
 	if (type < 0 || type > 1)
@@ -88,17 +90,15 @@ void Graph::buildGraph(int type)
 	}
 }
 
-void Graph::shortestPath(unsigned int source)
+std::vector<unsigned int> Graph::shortestPath(unsigned int source)
 {
 	std::vector<bool> visited = std::vector<bool>(m_size);
 	std::vector<unsigned int> dist = std::vector<unsigned int>(m_size);
-	std::vector<unsigned int> spt = std::vector<unsigned int>(m_size);
 
 	for (int i = 0; i < m_size; i++)
 	{
 		visited[i] = false;
 		dist[i] = INF;
-		spt[i] = -1;
 	}
 	dist[source] = 0;
 	for (int i = 0; i < m_size - 1; i++)
@@ -114,21 +114,24 @@ void Graph::shortestPath(unsigned int source)
 			}
 		}
 	}
-	// print shortest distance from src to every node
-	printSet(dist);
+	if (m_verbose)
+	{
+		// print shortest distance from src to every node
+		printVector(dist);
+	}
+	return dist;
 }
 
-void Graph::shortestPath(unsigned int source, unsigned int destination)
+std::queue<unsigned int> Graph::shortestPath(unsigned int source, unsigned int destination)
 {
 	std::vector<bool> visited = std::vector<bool>(m_size);
 	std::vector<unsigned int> dist = std::vector<unsigned int>(m_size);
-	std::vector<unsigned int> spt = std::vector<unsigned int>(m_size);
+	std::queue<unsigned int> spt;
 
 	for (int i = 0; i < m_size; i++)
 	{
 		visited[i] = false;
 		dist[i] = INF;
-		spt[i] = INF;
 	}
 	dist[source] = 0;
 	for (int i = 0; i < m_size; i++)
@@ -142,13 +145,20 @@ void Graph::shortestPath(unsigned int source, unsigned int destination)
 			{
 				dist[j] = dist[minIndex] + m_matrix[minIndex][j];
 				if (j == destination)
-					spt[i] = minIndex; // previous node, TODO: replace with queue or stack
+					spt.push(minIndex); // previous node
 			}
 		}
-		 printIter(dist, i);
+		if (m_verbose)
+		{
+			printVector(dist, i);
+		}
 	}
-	// print path to destination node
-	printSet(spt);
+	if (m_verbose)
+	{
+		// print path to destination node
+		printQueue(spt);
+	}
+	return spt;
 }
 
 unsigned int Graph::minDistance(std::vector<unsigned int> distArr, std::vector<bool> spt)
@@ -166,45 +176,32 @@ unsigned int Graph::minDistance(std::vector<unsigned int> distArr, std::vector<b
 	return min_index;
 }
 
-void Graph::printSet(std::vector<unsigned int> set)
+void Graph::printQueue(std::queue<unsigned int> q)
 {
-	std::cout << "count:";
-	for (int i = 0; i < set.size(); i++)
+	std::cout << "nodes:";
+	for (; !q.empty(); q.pop())
 	{
-		if (i == set.size() - 1)
-		{
-			std::cout << std::setw(3) << i << std::endl;
-		}
-		else
-		{
-			std::cout << std::setw(3) << i;
-		}
-	}
-	std::cout << "node :";
-	for (int i = 0; i < set.size(); i++)
-	{
-		if (i == set.size() - 1 && set[i] == INF)
+		if (q.size() - 1 && q.front() == INF)
 		{
 			std::cout << std::setw(3) << "-" << std::endl;
 		}
-		else if (i == set.size() - 1)
+		else if (q.size() - 1 == 0)
 		{
-			std::cout << std::setw(3) << set[i] << std::endl;
+			std::cout << std::setw(3) << q.front() << std::endl;
 		}
-		else if (set[i] == INF)
+		else if (q.front() == INF)
 		{
 			std::cout << std::setw(3) << "-";
 		}
 		else
 		{
-			std::cout << std::setw(3) << set[i];
+			std::cout << std::setw(3) << q.front();
 		}
 	}
 }
 
-void Graph::printIter(std::vector<unsigned int> set, int iteration)
+void Graph::printVector(std::vector<unsigned int> set)
 {
-	std::cout << "iteration: " << iteration << std::endl;
 	std::cout << "index:";
 	for (int i = 0; i < set.size(); i++)
 	{

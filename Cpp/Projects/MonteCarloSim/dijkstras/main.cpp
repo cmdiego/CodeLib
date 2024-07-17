@@ -35,8 +35,8 @@ int main()
 	float density = 0.8;
 	int size = 20;
 
-	Graph* p_graph = new Graph(size, density, 1);
-	p_graph->print();
+	Graph* p_graph = new Graph(size, density, 1, true);
+	p_graph->printGraph();
 	std::cout << "Shortest distance from source to all nodes: \n";
 	p_graph->shortestPath(0, 4);
 	delete(p_graph);

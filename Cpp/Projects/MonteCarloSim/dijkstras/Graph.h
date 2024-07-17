@@ -4,14 +4,13 @@
 class Graph
 {
 public:
-	Graph(unsigned int size, float density, int type);
-	void shortestPath(unsigned int source);
-	void shortestPath(unsigned int source, unsigned int dest);
+	Graph(unsigned int size, float density, int type, bool verbose);
+	std::vector<unsigned int> shortestPath(unsigned int source);
+	std::queue<unsigned int> shortestPath(unsigned int source, unsigned int dest);
 	bool isEdge(unsigned int from, unsigned int to);
 	void printGraph();
-	void printSet(std::vector<unsigned int> set);
-	void printIter(std::vector<unsigned int> set, int interation);
-	void printMatrix(std::vector<std::vector<unsigned int>> matrix);
+	void printQueue(std::queue<unsigned int> q);
+	void printVector(std::vector<unsigned int> set);
 private:
 	unsigned int minDistance(std::vector<unsigned int> distArr, 
 		std::vector<bool> spt);
@@ -25,6 +24,7 @@ private:
 	unsigned int m_maxNumEdges;
 	unsigned int m_totalEdges;
 	unsigned int m_maxWeight;
+	bool m_verbose;
 	float m_density;
 	int INF = INT_MAX;
 };
