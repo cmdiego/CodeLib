@@ -11,7 +11,7 @@ inline unsigned int randomGenerator(unsigned int min, unsigned int max)
 	return min + rand() % (max - min + 1);
 };
 
-Graph::Graph(const unsigned int size, float density, int type, bool verbose)
+Graph::Graph(const unsigned int size, float density, bool type, bool verbose)
 {
 	// Why does the randomGenerator work if we place the srand func inside Graph??
 	srand(time(NULL));
@@ -29,19 +29,11 @@ Graph::Graph(const unsigned int size, float density, int type, bool verbose)
 	m_density = density;
 	m_size = size;
 	m_totalEdges = 0;
-	m_maxWeight = 10; // Default: max weight of an edge
+	m_maxWeight = 100; // Default: max weight of an edge
 	m_verbose = verbose;
 	// m_size * m_size = total num of edges in a complete graph
 	m_matrix = std::vector<std::vector<unsigned int>>(m_size, std::vector<unsigned int>(m_size, INF));
-	if (type < 0 || type > 1)
-	{
-		std::cout << "invalid type passed to constructor" << std::endl;
-		exit(1);
-	}
-	else
-	{
-		this->buildGraph(type);
-	}
+	this->buildGraph(type);
 }
 
 void Graph::addEdge(unsigned int from, unsigned int to, unsigned int weight)
@@ -62,14 +54,14 @@ bool Graph::isEdge(unsigned int from, unsigned int to)
 
 void Graph::buildGraph(int type)
 {
-	if (type == 0)
+	if (type)
 		std::cout << "Building a directed graph..." << std::endl;
 	else
 		std::cout << "Building a undirected graph..." << std::endl;
 
-	for (unsigned i = 0; i < m_size; i++)
+	for (unsigned int i = 0; i < m_size; i++)
 	{
-		for (unsigned j = 0; j < m_size; j++)
+		for (unsigned int j = 0; j < m_size; j++)
 		{
 			if (i == j)
 			{
@@ -81,7 +73,7 @@ void Graph::buildGraph(int type)
 			{
 				int weight = randomGenerator(1, m_maxWeight); // Greater than 0
 				addEdge(i, j, weight);
-				if (type == 0)
+				if (type)
 					addEdge(j, i, 0); // 0 means no edge
 				else
 					addEdge(j, i, weight);
@@ -95,17 +87,17 @@ std::vector<unsigned int> Graph::shortestPath(unsigned int source)
 	std::vector<bool> visited = std::vector<bool>(m_size);
 	std::vector<unsigned int> dist = std::vector<unsigned int>(m_size);
 
-	for (int i = 0; i < m_size; i++)
+	for (unsigned int i = 0; i < m_size; i++)
 	{
 		visited[i] = false;
 		dist[i] = INF;
 	}
 	dist[source] = 0;
-	for (int i = 0; i < m_size - 1; i++)
+	for (unsigned int i = 0; i < m_size - 1; i++)
 	{
 		unsigned int minIndex = minDistance(dist, visited);
 		visited[minIndex] = true;
-		for (int j = 0; j < m_size; j++)
+		for (unsigned int j = 0; j < m_size; j++)
 		{
 			if (!visited[j] && m_matrix[minIndex][j] &&
 				dist[minIndex] != INF && (dist[minIndex] + m_matrix[minIndex][j]) < dist[j])
@@ -122,7 +114,7 @@ std::vector<unsigned int> Graph::shortestPath(unsigned int source)
 	return dist;
 }
 
-std::queue<unsigned int> Graph::shortestPath(unsigned int source, unsigned int destination)
+std::queue<unsigned int> Graph::shortestPathTo(unsigned int source, unsigned int destination)
 {
 	std::vector<bool> visited = std::vector<bool>(m_size);
 	std::vector<unsigned int> dist = std::vector<unsigned int>(m_size);
@@ -134,6 +126,7 @@ std::queue<unsigned int> Graph::shortestPath(unsigned int source, unsigned int d
 		dist[i] = INF;
 	}
 	dist[source] = 0;
+	spt.push(source);
 	for (int i = 0; i < m_size; i++)
 	{
 		unsigned int minIndex = minDistance(dist, visited);
@@ -150,7 +143,9 @@ std::queue<unsigned int> Graph::shortestPath(unsigned int source, unsigned int d
 		}
 		if (m_verbose)
 		{
-			printVector(dist, i);
+			std::cout << "iteration: " << i << std::endl;
+			printVector(dist);
+			std::cout << "\n";
 		}
 	}
 	if (m_verbose)
@@ -195,7 +190,7 @@ void Graph::printQueue(std::queue<unsigned int> q)
 		}
 		else
 		{
-			std::cout << std::setw(3) << q.front();
+			std::cout << std::setw(3) << q.front() << "->";
 		}
 	}
 }

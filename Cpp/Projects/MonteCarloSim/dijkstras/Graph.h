@@ -1,12 +1,13 @@
 #pragma once
 #include <vector>
+#include <queue>
 
 class Graph
 {
 public:
-	Graph(unsigned int size, float density, int type, bool verbose);
+	Graph(unsigned int size, float density, bool type, bool verbose);
 	std::vector<unsigned int> shortestPath(unsigned int source);
-	std::queue<unsigned int> shortestPath(unsigned int source, unsigned int dest);
+	std::queue<unsigned int> shortestPathTo(unsigned int source, unsigned int dest);
 	bool isEdge(unsigned int from, unsigned int to);
 	void printGraph();
 	void printQueue(std::queue<unsigned int> q);

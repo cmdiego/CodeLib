@@ -32,12 +32,14 @@ using namespace std;
 
 int main()
 {
-	float density = 0.8;
-	int size = 20;
+	float density = 0.15;
+	int size = 100;
+	bool directed = false;
+	bool verbose = true;
+	unsigned int destination = 4;
 
-	Graph* p_graph = new Graph(size, density, 1, true);
-	p_graph->printGraph();
-	std::cout << "Shortest distance from source to all nodes: \n";
-	p_graph->shortestPath(0, 4);
+	Graph* p_graph = new Graph(size, density, directed, verbose);
+	std::cout << "Shortest distance traversal from: " << 0 << " to: " << destination << std::endl;
+	std::queue<unsigned int> retVal = p_graph->shortestPathTo(0, destination);
 	delete(p_graph);
 }
