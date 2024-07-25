@@ -30,16 +30,60 @@
 
 using namespace std;
 
+unsigned int monteCarloSim(Graph& g, unsigned int n_sim, unsigned int src);
+float vectorAvg(std::vector<unsigned int> v);
+
 int main()
 {
 	float density = 0.15;
 	int size = 100;
-	bool directed = false;
-	bool verbose = true;
+	bool directed = true;
+	bool verbose = false;
 	unsigned int destination = 4;
+	unsigned int num_simulations = 1000;
+	unsigned int src = 0;
+	float result = 0.0;
 
 	Graph* p_graph = new Graph(size, density, directed, verbose);
-	std::cout << "Shortest distance traversal from: " << 0 << " to: " << destination << std::endl;
-	std::queue<unsigned int> retVal = p_graph->shortestPathTo(0, destination);
+	result = monteCarloSim(*p_graph, num_simulations, src);
+	std::cout << "Average shortest path from " << src << " to all nodes = " << result << std::endl;
 	delete(p_graph);
+}
+
+/* 
+	@brief:		Monte Carlo Simulator 
+				The simulator will use the shortestPath() method and get an average
+				of all shortest paths from the source node to every node.
+	@params:	Graph: Graph object properly initialized,
+				n_sim: Number of simulations to run.
+	@returns:	The total average weight for the shortest paths 
+				from the src to every node, n_sim number of times.
+*/
+unsigned int monteCarloSim(Graph& graph, unsigned int n_sim, unsigned int src)
+{
+	float avg = 0.0, total_avg = 0.0;
+	std::vector<unsigned int> dist;
+	/* Run the simulation */
+	for (int i = 0; i < n_sim; ++i)
+	{
+		dist = graph.shortestPath(src);
+		avg += vectorAvg(dist);
+	}
+	total_avg = avg / n_sim;
+
+	return total_avg;
+}
+
+float vectorAvg(std::vector<unsigned int> weights)
+{
+	int size = weights.size();
+	int i = 0, temp = 0;
+	float result = 0.0;
+	for (; i < size; ++i)
+	{
+		temp += weights[i];
+	}
+	result = static_cast<float>(temp)/(size);
+
+	return result;
 }
